@@ -4,13 +4,18 @@ const app = express();
 
 app.use(cors());
 
-app.get("/ig_images", async (req, res) => {
-  const fetch = (await import("node-fetch")).default;
-  const response = await fetch(
-    "https://github.com/Chilinhung/ig_data/main/image_set.json"
-  );
-  const data = await response.json();
-  res.json(data);
+app.get("/images", async (req, res) => {
+  try {
+    const url =
+      "https://raw.githubusercontent.com/Chilinhung/meme_questionnaire/tree/main/question_set.json";
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error("Fetch error:", error);
+    res.status(500).send(error.message);
+  }
 });
 
 app.listen(3000, () => {

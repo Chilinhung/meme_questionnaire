@@ -68,12 +68,15 @@
         </form>
       </div>
       <div id="questions">
+        <script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.js"></script>
         <script src="cor_fetch.js" defer></script>
         <script>
           document.addEventListener("DOMContentLoaded", function () {
             const selectElement = document.getElementById("set_num");
             const questionsContainer = document.getElementById("questions");
-            fetch("https://raw.githubusercontent.com/Chilinhung/meme_questionnaire/main/question_set.json")
+            fetch(
+              "https://raw.githubusercontent.com/Chilinhung/meme_questionnaire/main/question_set.json"
+            )
               .then((response) => response.json())
               .then((images) => {
                 populateOptions(images, selectElement);
@@ -91,22 +94,29 @@
               });
 
             function populateOptions(images, selectElement) {
-                Object.keys(images).forEach((key) => {
-                    const option = document.createElement("option");
-                    option.value = key;
-                    option.textContent = key.replace("set", "Set ");
-                    selectElement.appendChild(option);
-                });
+              Object.keys(images).forEach((key) => {
+                const option = document.createElement("option");
+                option.value = key;
+                option.textContent = key.replace("set_", "Set ");
+                selectElement.appendChild(option);
+              });
               selectElement.dispatchEvent(new Event("change")); // Initialize on first load
               console.log("Options added");
             }
             function updateQuestions(images, selectElement) {
-              console.log("Dropdown changed, selected value:", selectElement.value);
+              console.log(
+                "Dropdown changed, selected value:",
+                selectElement.value
+              );
               const setNum = selectElement.value;
               const setImagePaths = images[setNum];
               let allQuestionsHTML = "";
               setImagePaths.forEach((imagePath, index) => {
-                allQuestionsHTML += createQuestionHTML(index,imagePath,selectElement);
+                allQuestionsHTML += createQuestionHTML(
+                  index,
+                  imagePath,
+                  selectElement
+                );
               });
               questionsContainer.innerHTML = allQuestionsHTML;
               console.log("Questions added to container");
