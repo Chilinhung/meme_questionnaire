@@ -1,0 +1,115 @@
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  body {
+    margin: auto;
+    background-color: #acc;
+    display: flex;
+    text-align: center;
+  }
+  .container {
+    margin: 0em 2em;
+    background-color: #fff;
+    font-family: "Noto Sans CJK TC", sans-serif;
+  }
+  .title p {
+    text-align: justify;
+    padding: 16px;
+  }
+  .questions h3 {
+    text-shadow: #537363 5in;
+  }
+  .question-text p {
+    margin: 30px 10px 10px;
+  }
+  .slider-container {
+    position: relative;
+    margin: auto;
+    width: 60%;
+    height: 30px;
+    
+  }
+  .slider-marks {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    width: 100%;
+    padding-left: 4px; /* 调整第一个刻度的位置 */
+    padding-right: 4px; /* 调整最后一个刻度的位置 */
+    bottom: -25px; /* 控制刻度标记相对于滑块的垂直位置 */
+    padding-bottom: 15px;
+  }
+
+  .slider-marks span {
+    position: relative; 
+    display: block;
+    text-align: center;
+  }
+
+  .slider-container input[type="range"] {
+    pointer-events: auto; /* 允許滑鼠事件 */
+    z-index: 1000; /* 確保在頂層 */
+    position: relative;
+    width: 100%; /* Ensure the slider is full width to align ticks */
+  }
+
+
+  .submission {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10vh;
+  }
+  #submit_btn {
+    background-color: #537363; /* 綠色背景 */
+    color: white; /* 白色文字 */
+    padding: 10px 23px; /* 按鈕內邊距 */
+    text-align: center; /* 文字置中 */
+    text-decoration: none; /* 移除文字下劃線 */
+    display: inline-block; /* 內聯區塊元素 */
+    font-size: 16px; /* 字體大小 */
+    margin: 4px 2px; /* 外邊距 */
+    cursor: pointer; /* 鼠標指針 */
+    border: none; /* 無邊框 */
+    border-radius: 8px; /* 圓角 */
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  }
+
+  #submit_btn:hover {
+    background-color: #00caca; /* 當鼠標懸停時的顏色 */
+  }
+  #submit_btn::after {
+    background-color: #b24c4c;
+  }
+
+  @media (min-width: 700px) {
+    .content{
+        display: flex;
+        justify-content: space-between;
+        height: auto;
+        align-items: center;
+        align-content: left;
+    }
+    .content h3{
+        margin: 70px 0 0;
+        text-align: left;
+        text-size-adjust: 30px !important;
+    }
+
+    .question-image {
+        flex: 1;
+        max-width: 33% !important;
+        margin: 20px 25px;
+        padding-left: 60px;
+    }
+    .question-text {
+        flex: 1;
+        max-width: 50%;
+    }
+    .question-text, .slider-container {
+        flex: 1;
+        margin-bottom: 60px;  /* 增加下方外邊距來拉寬行距 */
+    }
+  }

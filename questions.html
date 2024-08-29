@@ -4,47 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style2.css" />
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-      }
-      body {
-        margin: auto;
-        background-color: #acc;
-        display: flex;
-        text-align: center;
-      }
-      .container {
-        margin: 0em 2em;
-        background-color: #fff;
-        font-family: "Noto Sans CJK TC", sans-serif;
-      }
-      .title p {
-        text-align: justify;
-        padding: 16px;
-      }
-      .submission {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 10vh;
-      }
-      #submit_btn {
-        background-color: #537363; /* 綠色背景 */
-        color: white; /* 白色文字 */
-        padding: 10px 23px; /* 按鈕內邊距 */
-        text-align: center; /* 文字置中 */
-        text-decoration: none; /* 移除文字下劃線 */
-        display: inline-block; /* 內聯區塊元素 */
-        font-size: 16px; /* 字體大小 */
-        margin: 4px 2px; /* 外邊距 */
-        cursor: pointer; /* 鼠標指針 */
-        border: none; /* 無邊框 */
-        border-radius: 8px; /* 圓角 */
-      }
-    </style>
+    <style></style>
     <title>迷因</title>
   </head>
   <body>
@@ -56,10 +16,11 @@
         <p>
           <br />此問卷希望您根據個人主觀判斷以下迷因的
           <b>好笑（幽默）程度</b> 和
-          <b>冒犯他人程度</b
-          >。「冒犯」的定義包含對人沒有禮貌、得罪或激怒他人，只要讓人覺得被攻擊都算。<b
-            >被冒犯者可以是社會上任一生命體、族群或個人，只要你感受到任一個體被冒犯到都算。</b
-          ><br />兩者評分標準皆為0-5，0為完全不（好笑/冒犯），5為超級（好笑/冒犯）。<br />
+          <b>冒犯程度</b
+          >。「冒犯」的定義包含對任一個體沒有禮貌、得罪或激怒該個體，只要讓人覺得被攻擊都算。<b
+            >被冒犯者可以是社會上任一生命體、族群或個人，只要你感受到有就可以。</b
+          ><br />兩者評分標準皆為 0 - 5，0 為完全不（好笑/冒犯），5
+          為超級（好笑/冒犯）。<br />
         </p>
         <br />
         <form id="questionnaireForm">
@@ -68,21 +29,19 @@
         </form>
       </div>
       <div id="questions">
-        <script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.js"></script>
-        <script src="cor_fetch.js" defer></script>
         <script>
           document.addEventListener("DOMContentLoaded", function () {
             const selectElement = document.getElementById("set_num");
             const questionsContainer = document.getElementById("questions");
-            fetch(
-              "https://raw.githubusercontent.com/Chilinhung/meme_questionnaire/main/question_set.json"
-            )
+            const baseURL =
+              "https://raw.githubusercontent.com/Chilinhung/meme_questionnaire/main";
+
+            fetch(`${baseURL}/question_set.json`)
               .then((response) => response.json())
-              .then((images) => {
-                populateOptions(images, selectElement);
+              .then((questionSets) => {
+                populateOptions(questionSets, selectElement);
                 selectElement.addEventListener("change", function () {
-                  updateQuestions(images, selectElement);
-                  console.log("bottom images found");
+                  updateQuestions(questionSets, selectElement.value);
                 });
                 if (selectElement.options.length > 0) {
                   selectElement.value = selectElement.options[0].value;
@@ -93,68 +52,39 @@
                 console.error("Failed to fetch image set:", error);
               });
 
-            function populateOptions(images, selectElement) {
-              Object.keys(images).forEach((key) => {
+            function populateOptions(questionSets, selectElement) {
+              Object.keys(questionSets).forEach((key) => {
                 const option = document.createElement("option");
                 option.value = key;
                 option.textContent = key.replace("set_", "Set ");
                 selectElement.appendChild(option);
               });
-              selectElement.dispatchEvent(new Event("change")); // Initialize on first load
-              console.log("Options added");
-            }
-            function updateQuestions(images, selectElement) {
-              console.log(
-                "Dropdown changed, selected value:",
-                selectElement.value
-              );
-              const setNum = selectElement.value;
-              const setImagePaths = images[setNum];
-              let allQuestionsHTML = "";
-              setImagePaths.forEach((imagePath, index) => {
-                allQuestionsHTML += createQuestionHTML(
-                  index,
-                  imagePath,
-                  selectElement
-                );
-              });
-              questionsContainer.innerHTML = allQuestionsHTML;
-              console.log("Questions added to container");
-              attachRangeInputEvents();
-            }
-            function updateQuestions(images, selectElement) {
-              console.log(
-                "Dropdown changed, selected value:",
-                selectElement.value
-              );
-              const setNum = selectElement.value;
-              const setImagePaths = images[setNum];
-              let allQuestionsHTML = "";
-              setImagePaths.forEach((imagePath, index) => {
-                allQuestionsHTML += createQuestionHTML(
-                  index,
-                  imagePath,
-                  selectElement
-                );
-              });
-              questionsContainer.innerHTML = allQuestionsHTML;
-              console.log("Questions added to container");
-              attachRangeInputEvents();
             }
 
-            function createQuestionHTML(index, imagePath, selectElement) {
+            function updateQuestions(questionSets, selectedSet) {
+              const setImageNames = questionSets[selectedSet];
+              questionsContainer.innerHTML = "";
+              setImageNames.forEach((imageName, index) => {
+                const imageUrl = `${baseURL}/images/${selectedSet}/${imageName}`;
+                questionsContainer.innerHTML += createQuestionHTML(
+                  index,
+                  imageUrl,
+                  selectedSet
+                );
+              });
+            }
+
+            function createQuestionHTML(index, imageUrl, selectedSet) {
               return `
                         <div class="questions">
                             <br />
                             <h3>Question ${index + 1}</h3> 
                             <div class= "content">
-                                <img src="https://raw.githubusercontent.com/Chilinhung/meme_questionnaire/main/images/${imagePath}" alt="Meme image for question ${index + 1}" style="max-width: 35%; height: auto;">
+                                <img class='question-image' src='${imageUrl}' alt="Meme image for question ${index + 1}" style="max-width: 85%; height: auto;">
                                 <div class="question-text">
                                     <p>這個迷因的好笑程度你給幾分？</p>
                                     <div class="slider-container">
-                                        <input type="range" class="question-input" data-question-id="${
-                                          selectElement.value
-                                        }_q${index + 1}" data-aspect="humor" min="0" max="5" value="0"> 
+                                        <input type="range" class="question-input" data-question-id="${selectedSet}_q${index + 1}" data-aspect="humor" min="0" max="5" value="0" max-width=: 100%;height: 26px;> 
                                         <div class="slider-marks">
                                             <span>0</span>
                                             <span>1</span>
@@ -166,9 +96,7 @@
                                     </div>
                                     <p>這個迷因的冒犯程度你給幾分？</p>
                                     <div class="slider-container">
-                                        <input type="range" class="question-input" data-question-id="${
-                                          selectElement.value
-                                        }_q${index + 1}" data-aspect="offensive" min="0" max="5" value="0">
+                                        <input type="range" class="question-input" data-question-id="${selectedSet}_q${index + 1}" data-aspect="offensive" min="0" max="5" value="0">
                                         <div class="slider-marks">
                                             <span>0</span>
                                             <span>1</span>
@@ -179,6 +107,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                <br /><br /><br /><br />
                             </div>
                         </div>
                     `;
@@ -196,10 +125,11 @@
           });
         </script>
       </div>
-      <br /><br /><br />
+      <br />
       <div class="submission">
         <button type="button" id="submit_btn">提交問卷</button>
       </div>
     </div>
+    <script src="output_result.js"></script>
   </body>
 </html>
