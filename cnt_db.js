@@ -11,7 +11,7 @@ ADD COLUMN submit_time TIMESTAMP;
 
 // tackle root URL GET requests
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "questionnaire.html"));
+  res.sendFile(path.join(__dirname, "questions.html"));
 });
 
 const { Pool } = require("pg");
