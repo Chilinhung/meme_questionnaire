@@ -17,7 +17,7 @@ document.getElementById("submit_btn").addEventListener("click", function () {
     .then((response) => response.json())
     .then((data) => {
       console.log("Success:", data);
-      alert("問卷已成功提交，謝謝!");
+      alert("問卷已成功提交，謝謝！\n祝你有美好的一天~");
       location.reload();
     })
     .catch((error) => {
