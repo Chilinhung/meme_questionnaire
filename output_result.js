@@ -7,7 +7,7 @@ document.getElementById("submit_btn").addEventListener("click", function () {
     responses.push({ questionId, aspect, value });
   });
 
-  fetch("https://meme-survey-app-929d134b2578.herokuapp.com/submit", {
+  fetch("https://meme-servey-v2-1d925ee162ce.herokuapp.com/submit", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
