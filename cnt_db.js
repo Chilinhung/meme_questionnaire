@@ -35,12 +35,14 @@ const pool = new Pool({
 
 app.post("/submit", async (req, res) => {
   const responses = req.body.responses; // 獲取前端發送的 responses
+  console.log(responses);
   const ipAddress = req.ip;
   const submitTime = new Date().toISOString();
   try {
+    
     for (const response of responses) {
-      const { questionId, aspect, value } = response;
-      await saveResponse(questionId, aspect, value, ipAddress, submitTime);
+      const { questionId, aspect, value, gender, age, user_text } = response;
+      await saveResponse(questionId, aspect, value, ipAddress, submitTime, gender, age, user_text);
     }
     res.send({ status: "success", message: "All responses saved!" });
   } catch (error) {
@@ -51,16 +53,29 @@ app.post("/submit", async (req, res) => {
   }
 });
 
-async function saveResponse(questionId, aspect, value, ip, time) {
+async function saveResponse(
+  questionId,
+  aspect,
+  value,
+  ip,
+  time,
+  gender,
+  age,
+  user_text
+) {
+  console.log(questionId, aspect, value, ip, time, gender, age, user_text);
   try {
     const query =
-      "INSERT INTO survey_results(question_id, aspect, value, ip_address, submit_time) VALUES($1, $2, $3, $4, $5)";
+      "INSERT INTO survey_results(question_id, aspect, value, ip_address, submit_time, gender, age, user_text) VALUES($1, $2, $3, $4, $5, $6, $7, $8)";
     const result = await pool.query(query, [
       questionId,
       aspect,
       value,
       ip,
       time,
+      gender,
+      age,
+      user_text,
     ]);
     return result;
   } catch (error) {

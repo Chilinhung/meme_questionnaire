@@ -24,54 +24,55 @@
           <select id="set_num" name="set_num"></select>
         </form>
       </div>
-      <div id="questions">
-        <script>
-          document.addEventListener("DOMContentLoaded", function () {
-            const selectElement = document.getElementById("set_num");
-            const questionsContainer = document.getElementById("questions");
-            const baseURL =
-              "https://raw.githubusercontent.com/Chilinhung/meme_questionnaire/main";
+      <form id="survey-form">
+        <div id="questions" class="questions">
+          <script>
+            document.addEventListener("DOMContentLoaded", function () {
+              const selectElement = document.getElementById("set_num");
+              const questionsContainer = document.getElementById("questions");
+              const baseURL =
+                "https://raw.githubusercontent.com/Chilinhung/meme_questionnaire/main";
 
-            fetch(`${baseURL}/question_set.json`)
-              .then((response) => response.json())
-              .then((questionSets) => {
-                populateOptions(questionSets, selectElement);
-                selectElement.addEventListener("change", function () {
-                  updateQuestions(questionSets, selectElement.value);
+              fetch(`${baseURL}/question_set.json`)
+                .then((response) => response.json())
+                .then((questionSets) => {
+                  populateOptions(questionSets, selectElement);
+                  selectElement.addEventListener("change", function () {
+                    updateQuestions(questionSets, selectElement.value);
+                  });
+                  if (selectElement.options.length > 0) {
+                    selectElement.value = selectElement.options[0].value;
+                    selectElement.dispatchEvent(new Event("change"));
+                  }
+                })
+                .catch((error) => {
+                  console.error("Failed to fetch image set:", error);
                 });
-                if (selectElement.options.length > 0) {
-                  selectElement.value = selectElement.options[0].value;
-                  selectElement.dispatchEvent(new Event("change"));
-                }
-              })
-              .catch((error) => {
-                console.error("Failed to fetch image set:", error);
-              });
 
-            function populateOptions(questionSets, selectElement) {
-              Object.keys(questionSets).forEach((key) => {
-                const option = document.createElement("option");
-                option.value = key;
-                option.textContent = key.replace("set_", "Set ");
-                selectElement.appendChild(option);
-              });
-            }
+              function populateOptions(questionSets, selectElement) {
+                Object.keys(questionSets).forEach((key) => {
+                  const option = document.createElement("option");
+                  option.value = key;
+                  option.textContent = key.replace("set_", "Set ");
+                  selectElement.appendChild(option);
+                });
+              }
 
-            function updateQuestions(questionSets, selectedSet) {
-              const setImageNames = questionSets[selectedSet];
-              questionsContainer.innerHTML = "";
-              setImageNames.forEach((imageName, index) => {
-                const imageUrl = `${baseURL}/images/${selectedSet}/${imageName}`;
-                questionsContainer.innerHTML += createQuestionHTML(
-                  index,
-                  imageUrl,
-                  selectedSet
-                );
-              });
-            }
+              function updateQuestions(questionSets, selectedSet) {
+                const setImageNames = questionSets[selectedSet];
+                questionsContainer.innerHTML = "";
+                setImageNames.forEach((imageName, index) => {
+                  const imageUrl = `${baseURL}/images/${selectedSet}/${imageName}`;
+                  questionsContainer.innerHTML += createQuestionHTML(
+                    index,
+                    imageUrl,
+                    selectedSet
+                  );
+                });
+              }
 
-            function createQuestionHTML(index, imageUrl, selectedSet) {
-              return `
+              function createQuestionHTML(index, imageUrl, selectedSet) {
+                return `
                         <div class="questions">
                             <br />
                             <h3>Question ${index + 1}</h3> 
@@ -80,7 +81,7 @@
                                 <div class="question-text">
                                     <p>這個迷因的幽默程度你給幾分？</p>
                                     <div class="slider-container">
-                                        <input type="range" class="question-input" data-question-id="${selectedSet}_q${index + 1}" data-aspect="humor" min="0" max="5" value="0" max-width=: 100%;height: 26px;> 
+                                        <input type="range" class="question-input" name="questionInput" data-question-id="${selectedSet}_q${index + 1}" data-aspect="humor" min="0" max="5" value="0" max-width=: 100%;height: 26px;> 
                                         <div class="slider-marks">
                                             <span>0</span>
                                             <span>1</span>
@@ -92,7 +93,7 @@
                                     </div>
                                     <p>這個迷因的冒犯程度你給幾分？</p>
                                     <div class="slider-container">
-                                        <input type="range" class="question-input" data-question-id="${selectedSet}_q${index + 1}" data-aspect="offensive" min="0" max="5" value="0">
+                                        <input type="range" class="question-input" name="questionInput" data-question-id="${selectedSet}_q${index + 1}" data-aspect="offensive" min="0" max="5" value="0">
                                         <div class="slider-marks">
                                             <span>0</span>
                                             <span>1</span>
@@ -107,20 +108,56 @@
                             </div>
                         </div>
                     `;
-            }
+              }
 
-            function attachRangeInputEvents() {
-              document
-                .querySelectorAll('.slider-container input[type="range"]')
-                .forEach((input) => {
-                  input.addEventListener("input", function () {
-                    console.log("Slider value: ", this.value);
+              function attachRangeInputEvents() {
+                document
+                  .querySelectorAll('.slider-container input[type="range"]')
+                  .forEach((input) => {
+                    input.addEventListener("input", function () {
+                      console.log("Slider value: ", this.value);
+                    });
                   });
-                });
-            }
-          });
-        </script>
-      </div>
+              }
+            });
+          </script>
+        </div>
+
+        <div class="personal_info">
+          <br />
+          <p>
+            請問您的性別是？
+            <input type="radio" id="male" name="gender" value="male" />
+            <label for="male">生理男</label>
+            <input type="radio" id="female" name="gender" value="female" />
+            <label for="female">生理女</label>
+          </p>
+          <br />
+          <p>
+            請問您的年齡區間落在？
+            <select name="age">
+              <option value="15-20">15-20</option>
+              <option value="21-25">21-25</option>
+              <option value="26-30">26-30</option>
+              <option value="31-35">31-35</option>
+              <option value="36-40">36-40</option>
+              <option value="41-45">41-45</option>
+              <option value="46-50">46-50</option>
+              <option value="51-55">51-55</option>
+              <option value="56-60">56-60</option>
+              <option value="61-65">61-65</option>
+              <option value="66-70">66-70</option>
+              <option value="71+">71以上</option>
+            </select>
+          </p>
+          <br />
+          <p>
+            <label for="userInput">歡迎留下自己的大名、小名、個性簽名：</label>
+            <input type="text" id="userInput" name="userInput" />
+          </p>
+        </div>
+      </form>
+      <br />
       <br />
       <h4>感謝您撥冗填寫</h4>
       <br />
