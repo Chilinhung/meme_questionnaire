@@ -31,6 +31,7 @@
                 src="https://raw.githubusercontent.com/Chilinhung/meme_questionnaire/main/images/ani3small_meme_Cd2C4ZQO1eF.jpg"
                 alt="humorous-nonoffensive"
               />
+              <p></p>
             </div>
             <div class="sample_meme">
               <h4>幽默又有些冒犯</h4>
@@ -38,6 +39,7 @@
                 src="https://raw.githubusercontent.com/Chilinhung/meme_questionnaire/main/images/_hamiguagua_C3ar_RQS9v5.jpg"
                 alt="humorous-offensive"
               />
+              <p></p>
             </div>
           </div>
           <div class="wrap">
@@ -47,6 +49,7 @@
                 src="https://raw.githubusercontent.com/Chilinhung/meme_questionnaire/main/images/badgirl.master_Cao6TbTLsFg.jpg"
                 alt="nonhumor-nonoffensive"
               />
+              <p></p>
             </div>
             <div class="sample_meme">
               <h4>不幽默也不冒犯</h4>
@@ -54,6 +57,7 @@
                 src="https://raw.githubusercontent.com/Chilinhung/meme_questionnaire/main/images/dry_talk__C6LwWANOAyO.jpg"
                 alt="nonhumor-nonoffensive"
               />
+              <p></p>
             </div>
           </div>
         </div>
@@ -79,7 +83,7 @@
               fetch(`${baseURL}/question_set.json`)
                 .then((response) => response.json())
                 .then((questionSets) => {
-                  populateOptions(questionSets, selectElement);
+                  fetchCountsAndPopulateOptions(questionSets, selectElement);
                   selectElement.addEventListener("change", function () {
                     updateQuestions(questionSets, selectElement.value);
                   });
@@ -92,13 +96,34 @@
                   console.error("Failed to fetch image set:", error);
                 });
 
-              function populateOptions(questionSets, selectElement) {
+              /*              function populateOptions(questionSets, selectElement) {
                 Object.keys(questionSets).forEach((key) => {
                   const option = document.createElement("option");
                   option.value = key;
                   option.textContent = key.replace("set_", "Set ");
                   selectElement.appendChild(option);
                 });
+              }
+              */
+              function fetchCountsAndPopulateOptions(
+                questionSets,
+                selectElement
+              ) {
+                fetch(
+                  "https://raw.githubusercontent.com/Chilinhung/meme_questionnaire/main/api/get_counts"
+                ) // Replace with your actual API
+                  .then((response) => response.json())
+                  .then((counts) => {
+                    Object.keys(questionSets).forEach((key) => {
+                      if (!counts[key] || counts[key] < 2) {
+                        // Ensure the set has less than 5 responses
+                        const option = document.createElement("option");
+                        option.value = key;
+                        option.textContent = key.replace("set_", "Set ");
+                        selectElement.appendChild(option);
+                      }
+                    });
+                  });
               }
 
               function updateQuestions(questionSets, selectedSet) {
@@ -169,7 +194,7 @@
         <div class="personal_info">
           <br />
           <p>
-            請問你的性別是？
+            請問您的性別是？
             <input type="radio" id="male" name="gender" value="male" />
             <label for="male">生理男</label>
             <input type="radio" id="female" name="gender" value="female" />
@@ -177,7 +202,7 @@
           </p>
           <br />
           <p>
-            請問你的年齡區間落在？
+            請問您的年齡落在哪個區間？
             <select name="age">
               <option value="15-20">15-20</option>
               <option value="21-25">21-25</option>
@@ -195,7 +220,9 @@
           </p>
           <br />
           <p>
-            <label for="userInput">歡迎留下您的大名、小名或個性簽名：</label>
+            <label for="userInput"
+              >歡迎留下您的大名、小名、個性簽名或email：</label
+            >
             <input type="text" id="userInput" name="userInput" />
           </p>
         </div>

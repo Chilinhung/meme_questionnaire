@@ -135,7 +135,7 @@ body {
   }
 }
 
-@media (min-width: 1320px) {
+@media (min-width: 1280px) {
   .wrap_o {
     display: flex;
     flex-wrap: nowrap; /*不允許元素換行 */
