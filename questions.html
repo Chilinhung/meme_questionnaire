@@ -83,9 +83,9 @@
               fetch(`${baseURL}/question_set.json`)
                 .then((response) => response.json())
                 .then((questionSets) => {
-                  fetchCountsAndPopulateOptions(questionSets, selectElement);
+                  populateOptions(questionSets, selectElement, baseURL);
                   selectElement.addEventListener("change", function () {
-                    updateQuestions(questionSets, selectElement.value);
+                    updateQuestions(questionSets, selectElement.value, baseURL);
                   });
                   if (selectElement.options.length > 0) {
                     selectElement.value = selectElement.options[0].value;
@@ -96,7 +96,7 @@
                   console.error("Failed to fetch image set:", error);
                 });
 
-              /*              function populateOptions(questionSets, selectElement) {
+              function populateOptions(questionSets, selectElement, baseURL) {
                 Object.keys(questionSets).forEach((key) => {
                   const option = document.createElement("option");
                   option.value = key;
@@ -104,29 +104,42 @@
                   selectElement.appendChild(option);
                 });
               }
-              */
-              function fetchCountsAndPopulateOptions(
-                questionSets,
-                selectElement
-              ) {
+
+              function fetchCountsAndPopulateOptions(questionSets,selectElement,baseURL) {
                 fetch(
-                  "https://raw.githubusercontent.com/Chilinhung/meme_questionnaire/main/api/get_counts"
-                ) // Replace with your actual API
+                  "https://meme-servey-v2-1d925ee162ce.herokuapp.com/api/get_counts"
+                )
                   .then((response) => response.json())
                   .then((counts) => {
+                    selectElement.innerHTML = ""; // 清空之前的選項
                     Object.keys(questionSets).forEach((key) => {
                       if (!counts[key] || counts[key] < 2) {
-                        // Ensure the set has less than 5 responses
+                        // 確保每個set的回應少於2
                         const option = document.createElement("option");
                         option.value = key;
                         option.textContent = key.replace("set_", "Set ");
                         selectElement.appendChild(option);
                       }
                     });
+                  })
+                  .catch((error) => {
+                    console.error("Error fetching counts:", error);
                   });
               }
 
-              function updateQuestions(questionSets, selectedSet) {
+              function updateQuestions(questionSets, selectedSet, baseURL) {
+                const setImageNames = questionSets[selectedSet];
+                questionsContainer.innerHTML = ""; // 清空之前的問題
+                setImageNames.forEach((imageName, index) => {
+                  const imageUrl = `${baseURL}/images/${selectedSet}/${imageName}`;
+                  questionsContainer.innerHTML += createQuestionHTML(
+                    index,
+                    imageUrl,
+                    selectedSet
+                  );
+                });
+              }
+              /*function updateQuestions(questionSets, selectedSet) {
                 const setImageNames = questionSets[selectedSet];
                 questionsContainer.innerHTML = "";
                 setImageNames.forEach((imageName, index) => {
@@ -138,7 +151,7 @@
                   );
                 });
               }
-
+              */
               function createQuestionHTML(index, imageUrl, selectedSet) {
                 return `
                         <div class="questions">
