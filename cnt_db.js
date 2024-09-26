@@ -11,6 +11,10 @@ ALTER TABLE survey_results
 ADD COLUMN ip_address VARCHAR(255),
 ADD COLUMN submit_time TIMESTAMP;
 */
+// tackle root URL GET requests
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "questions.html"));
+});
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -25,10 +29,6 @@ const pool = new Pool({
           rejectUnauthorized: false,
         }
       : false,
-});
-// tackle root URL GET requests
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "questions.html"));
 });
 
 app.post("/submit", async (req, res) => {
@@ -89,8 +89,7 @@ async function saveResponse(
     throw error;
   }
 }
-
-
+/*
 app.get("/api/get_counts", async (req, res) => {
   try {
     const result = await pool.query(
@@ -116,7 +115,7 @@ app.get("/api/get_counts", async (req, res) => {
     res.status(500).send({ status: "error", message: "Error fetching counts" });
   }
 });
-
+*/
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

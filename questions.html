@@ -12,7 +12,7 @@
       <div class="title">
         <h1>迷因的幽默與冒犯</h1>
         <p>
-          <br />此問卷希望您根據個人主觀判斷以下迷因<b>好笑（幽默）的程度</b>
+          <br />此問卷希望您根據個人主觀判斷以下迷因<b>幽默（好笑）的程度</b>
           和任何生命體<b>被冒犯的程度</b>。「冒犯」的定義包含對<b>任一生命體或群體</b>沒有禮貌，可以是得罪、激怒，或是攻擊他人。此問卷希望您發揮同理心，感受個體被冒犯的程度，<b
             style="color: #ff0000"
             >被冒犯者不需要是你自己</b
@@ -83,9 +83,9 @@
               fetch(`${baseURL}/question_set.json`)
                 .then((response) => response.json())
                 .then((questionSets) => {
-                  populateOptions(questionSets, selectElement, baseURL);
+                  populateOptions(questionSets, selectElement);
                   selectElement.addEventListener("change", function () {
-                    updateQuestions(questionSets, selectElement.value, baseURL);
+                    updateQuestions(questionSets, selectElement.value);
                   });
                   if (selectElement.options.length > 0) {
                     selectElement.value = selectElement.options[0].value;
@@ -96,7 +96,7 @@
                   console.error("Failed to fetch image set:", error);
                 });
 
-              function populateOptions(questionSets, selectElement, baseURL) {
+              function populateOptions(questionSets, selectElement) {
                 Object.keys(questionSets).forEach((key) => {
                   const option = document.createElement("option");
                   option.value = key;
@@ -105,7 +105,11 @@
                 });
               }
 
-              function fetchCountsAndPopulateOptions(questionSets,selectElement,baseURL) {
+              /*              function fetchCountsAndPopulateOptions(
+                questionSets,
+                selectElement,
+                baseURL
+              ) {
                 fetch(
                   "https://meme-servey-v2-1d925ee162ce.herokuapp.com/api/get_counts"
                 )
@@ -126,8 +130,8 @@
                     console.error("Error fetching counts:", error);
                   });
               }
-
-              function updateQuestions(questionSets, selectedSet, baseURL) {
+*/
+              function updateQuestions(questionSets, selectedSet) {
                 const setImageNames = questionSets[selectedSet];
                 questionsContainer.innerHTML = ""; // 清空之前的問題
                 setImageNames.forEach((imageName, index) => {
@@ -139,19 +143,7 @@
                   );
                 });
               }
-              /*function updateQuestions(questionSets, selectedSet) {
-                const setImageNames = questionSets[selectedSet];
-                questionsContainer.innerHTML = "";
-                setImageNames.forEach((imageName, index) => {
-                  const imageUrl = `${baseURL}/images/${selectedSet}/${imageName}`;
-                  questionsContainer.innerHTML += createQuestionHTML(
-                    index,
-                    imageUrl,
-                    selectedSet
-                  );
-                });
-              }
-              */
+
               function createQuestionHTML(index, imageUrl, selectedSet) {
                 return `
                         <div class="questions">
@@ -160,7 +152,7 @@
                             <div class= "content">
                                 <img class='question-image' src='${imageUrl}' alt="Meme image for question ${index + 1}" style="max-width: 95%; height: auto; border: 3px solid #268484">
                                 <div class="question-text">
-                                    <p>這個迷因的好笑程度你給幾分？</p>
+                                    <p>這個迷因的幽默程度你給幾分？</p>
                                     <div class="slider-container">
                                         <input type="range" class="question-input" name="questionInput" data-question-id="${selectedSet}_q${index + 1}" data-aspect="humor" min="0" max="5" value="0" max-width=: 100%;height: 26px;> 
                                         <div class="slider-marks">
