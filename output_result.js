@@ -33,7 +33,7 @@ document
     });
 
     fetch("https://meme-servey-v2-1d925ee162ce.herokuapp.com/submit", {
-      method: "POST",
+      /**/ method: "POST",
       headers: {
         "Content-Type": "application/json",
       },

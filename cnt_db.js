@@ -6,19 +6,23 @@ const { Pool } = require("pg");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
-/* SQL
-ALTER TABLE survey_results
-ADD COLUMN ip_address VARCHAR(255),
-ADD COLUMN submit_time TIMESTAMP;
-*/
-// tackle root URL GET requests
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "questions.html"));
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
+});
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL, // Heroku 會自動設置此環境變量
@@ -30,6 +34,41 @@ const pool = new Pool({
         }
       : false,
 });
+
+app.get("/test-db", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT NOW()");
+    res.json({ success: true, time: result.rows[0].now });
+  } catch (error) {
+    console.error("Database connection error:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 新增路由來獲取每個set的填答人數
+app.get(
+  "/set-counts" /*https://meme-servey-v2-1d925ee162ce.herokuapp.com*/,
+  async (req, res) => {
+    console.log("Received request for /set-counts");
+    try {
+      const query = `
+      SELECT DISTINCT ON (set_num) set_num, COUNT(DISTINCT ip_address) as response_count
+      FROM (
+        SELECT SUBSTRING(question_id FROM '^set_\\d+') as set_num, ip_address
+        FROM survey_results
+      ) as subquery
+      GROUP BY set_num
+      ORDER BY set_num;
+    `;
+      const result = await pool.query(query);
+      console.log("Query result:", result.rows);
+      res.json(result.rows);
+    } catch (error) {
+      console.error("Error fetching set counts:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+);
 
 app.post("/submit", async (req, res) => {
   const responses = req.body.responses; // 獲取前端發送的 responses
@@ -89,33 +128,7 @@ async function saveResponse(
     throw error;
   }
 }
-/*
-app.get("/api/get_counts", async (req, res) => {
-  try {
-    const result = await pool.query(
-      "SELECT question_id, COUNT(*) as response_count FROM survey_results GROUP BY question_id"
-    );
-    let counts = {};
-    result.rows.forEach((row) => {
-      let setId = row.question_id.split("_")[0]; // Assuming question_id starts with set id like 'set_1_q1'
-      console.log("current search for count is set", setId);
-      if (counts[setId]) {
-        counts[setId] += 1;
-      } else {
-        counts[setId] = 1;
-      }
-    });
-    // Normalize counts by number of questions per set if necessary
-    Object.keys(counts).forEach((setId) => {
-      counts[setId] /= 40; // Adjust this if the number of questions per set varies
-    });
-    res.json(counts);
-  } catch (error) {
-    console.error("Error fetching counts:", error);
-    res.status(500).send({ status: "error", message: "Error fetching counts" });
-  }
-});
-*/
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
