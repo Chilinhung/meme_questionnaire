@@ -32,7 +32,7 @@ document
       response.user_text = user_text;
     });
 
-    fetch("https://meme-servey-v2-1d925ee162ce.herokuapp.com/submit", {
+    fetch("https://meme-survey-v2-1d925ee162ce.herokuapp.com/submit", {
       /**/ method: "POST",
       headers: {
         "Content-Type": "application/json",
