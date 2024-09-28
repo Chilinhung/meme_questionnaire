@@ -79,10 +79,9 @@
               const questionsContainer = document.getElementById("questions");
               const baseURL =
                 "https://raw.githubusercontent.com/Chilinhung/meme_questionnaire/main";
-              const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-                ?  'https://meme-servey-v2-1d925ee162ce.herokuapp.com': 'http://localhost:3000'; 
+              
 
-              fetch(`${API_BASE_URL}/set-counts`)
+              fetch(`https://meme-servey-v2-1d925ee162ce.herokuapp.com/set-counts`)
                   .then(response => {
                     if (!response.ok) {
                       throw new Error(`HTTP error! status: ${response.status}`);
@@ -118,10 +117,10 @@
               function populateOptions(questionSets, selectElement, setCounts) {
                 Object.keys(questionSets).forEach((key) => {
                   const count = setCounts.find(item => item.set_num === key)?.response_count || 0;
-                  if (count < 3) {
+                  if (count < 4) {
                     const option = document.createElement("option");
                     option.value = key;
-                    option.textContent = `${key.replace("set_", "Set ")} (${count}/5)`;
+                    option.textContent = `${key.replace("set_", "Set ")}  -- [${count}/4]`;
                     selectElement.appendChild(option);
                   }
                   
