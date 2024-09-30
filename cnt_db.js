@@ -46,29 +46,26 @@ app.get("/test-db", async (req, res) => {
 });
 
 // 新增路由來獲取每個set的填答人數
-app.get(
-  "/set-counts" /*https://meme-servey-v2-1d925ee162ce.herokuapp.com*/,
-  async (req, res) => {
-    console.log("Received request for /set-counts");
-    try {
-      const query = `
-      SELECT DISTINCT ON (set_num) set_num, COUNT(DISTINCT ip_address) as response_count
+app.get("/set-counts", async (req, res) => {
+  console.log("Received request for /set-counts");
+  try {
+    const query = `
+      SELECT DISTINCT ON (set_num) set_num, COUNT(DISTINCT (submit_time, ip_address)) as response_count
       FROM (
-        SELECT SUBSTRING(question_id FROM '^set_\\d+') as set_num, ip_address
+        SELECT SUBSTRING(question_id FROM '^set_\\d+') as set_num, submit_time, ip_address
         FROM survey_results
       ) as subquery
       GROUP BY set_num
       ORDER BY set_num;
     `;
-      const result = await pool.query(query);
-      console.log("Query result:", result.rows);
-      res.json(result.rows);
-    } catch (error) {
-      console.error("Error fetching set counts:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
+    const result = await pool.query(query);
+    console.log("Query result:", result.rows);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching set counts:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
-);
+});
 
 app.post("/submit", async (req, res) => {
   const responses = req.body.responses; // 獲取前端發送的 responses
