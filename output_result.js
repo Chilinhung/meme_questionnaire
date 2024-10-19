@@ -33,10 +33,8 @@ document
     });
 
     fetch("https://meme-survey-v2-d7196fb9b058.herokuapp.com/submit", {
-      /**/ method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ responses }),
     })
       .then((response) => response.json())

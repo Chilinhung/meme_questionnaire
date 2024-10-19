@@ -125,20 +125,14 @@
                   }
                   
                 });
-              }
+              }     
 
-
-              
               function updateQuestions(questionSets, selectedSet) {
                 const setImageNames = questionSets[selectedSet];
                 questionsContainer.innerHTML = ""; // 清空之前的問題
                 setImageNames.forEach((imageName, index) => {
                   const imageUrl = `${baseURL}/images/${selectedSet}/${imageName}`;
-                  questionsContainer.innerHTML += createQuestionHTML(
-                    index,
-                    imageUrl,
-                    selectedSet
-                  );
+                  questionsContainer.innerHTML += createQuestionHTML(index,imageUrl,selectedSet);
                 });
               }
 
