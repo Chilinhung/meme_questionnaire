@@ -117,7 +117,7 @@
               function populateOptions(questionSets, selectElement, setCounts) {
                 Object.keys(questionSets).forEach((key) => {
                   const count = setCounts.find(item => item.set_num === key)?.response_count || 0;
-                  if (count < 4) {
+                  if (count < 3) {
                     const option = document.createElement("option");
                     option.value = key;
                     option.textContent = `${key.replace("set_", "Set ")} `; /* -- [${count}/4] */
